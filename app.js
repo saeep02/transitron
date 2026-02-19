@@ -71,9 +71,13 @@ function handleFile(input) {
 
 /* Filter Tabs ─────────────────────────────────── */
 function filterMap(btn, filter) {
-  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // Future: filter the issue list by `filter` value
+  // Delegates to leaflet filter function defined in map script
+  if (typeof filterMapMarkers === 'function') {
+    filterMapMarkers(btn, filter);
+  } else {
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
 }
 
 /* ── Leaderboard – Tab Switching ───────────────────────── */

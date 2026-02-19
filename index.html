@@ -9,9 +9,7 @@
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════
-     NAVIGATION
-════════════════════════════════════════════════════════════ -->
+
 <nav>
   <a class="logo" onclick="showPage('home')">
     <div class="logo-icon">
@@ -46,7 +44,7 @@
       </svg>
       Dashboard
     </button>
-    <button class="btn-login">
+    <button class="btn-login" onclick="showPage('login')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
       </svg>
@@ -56,9 +54,7 @@
 </nav>
 
 
-<!-- ══════════════════════════════════════════════════════════
-     HOME PAGE
-════════════════════════════════════════════════════════════ -->
+
 <div id="page-home" class="page active">
 
   <!-- Hero -->
@@ -85,32 +81,32 @@
     <div class="section-header">
       <div class="section-badge">✨ Features</div>
       <h2 class="section-title">Everything You Need for <span>Safer Roads</span></h2>
-      <p class="section-sub">A comprehensive platform that empowers citizens and enables government transparency through smart technology.</p>
+      <p class="section-sub">A comprehensive platform that empowers citizens and enables government transparency  smart technology.</p>
     </div>
     <div class="feature-grid">
-      <div class="feature-card"><div class="feat-icon gold">📸</div><h3>Smart Reporting</h3><p>Upload images with auto GPS location, timestamp, and AI-powered damage validation.</p></div>
-      <div class="feature-card"><div class="feat-icon blue">📍</div><h3>Live Tracking</h3><p>Real-time status updates from Pending to Resolved with repair ETA and before/after photos.</p></div>
+      <div class="feature-card"><div class="feat-icon gold">📸</div><h3>Smart Reporting</h3><p>Upload images with geotagging feature for accuracy, timestamps, and AI-powered pothole/road damage detection and verification.</p></div>
+      <div class="feature-card"><div class="feat-icon blue">📍</div><h3>Live Tracking</h3><p>Real-time status updates from Pending to resolved with repair ETA and before/after photos.</p></div>
       <div class="feature-card"><div class="feat-icon gold">🏆</div><h3>Gamification</h3><p>Earn points, unlock badges, climb leaderboards, and win monthly rewards for your contributions.</p></div>
       <div class="feature-card"><div class="feat-icon purple">🔔</div><h3>Instant Alerts</h3><p>Get notified via SMS, email, and push notifications on repair progress and achievements.</p></div>
-      <div class="feature-card"><div class="feat-icon blue">🛡️</div><h3>AI Verification</h3><p>Machine learning filters fake reports, detects duplicates, and auto-prioritizes by severity.</p></div>
+      <div class="feature-card"><div class="feat-icon blue">🛡️</div><h3>AI Verification</h3><p>Machine learning filters fake reports, detects duplicate issues, and auto-prioritizes by severity.</p></div>
       <div class="feature-card"><div class="feat-icon teal">📊</div><h3>Transparency Dashboard</h3><p>Public analytics showing department performance, repair times, and citizen ratings.</p></div>
       <div class="feature-card"><div class="feat-icon orange">⚡</div><h3>Rapid Response</h3><p>Smart routing assigns complaints to nearest contractors for faster resolution.</p></div>
       <div class="feature-card"><div class="feat-icon blue">👥</div><h3>Community Power</h3><p>Multiple reports on same issue boost priority. Unite for safer roads together.</p></div>
     </div>
   </div>
 
-  <!-- How It Works -->
+
   <div class="steps-section">
     <div class="steps-inner">
       <div class="section-header">
         <div class="section-badge" style="background:rgba(240,165,0,0.2);color:var(--gold);">🚀 How It Works</div>
         <h2 class="section-title" style="color:white;">Report in <span>3 Simple Steps</span></h2>
-        <p class="section-sub" style="color:rgba(255,255,255,0.65);margin:0 auto;">Getting road issues fixed has never been easier. Join thousands of citizens making Solapur's roads safer.</p>
+        <p class="section-sub" style="color:rgba(255,255,255,0.65);margin:0 auto;">Join thousands of citizens making Solapur's roads safer.</p>
       </div>
       <div class="steps-grid">
-        <div class="step"><div class="step-num">1</div><h3>Snap &amp; Report</h3><p>Take a photo of the road damage. Our AI automatically detects location and damage severity.</p></div>
-        <div class="step"><div class="step-num">2</div><h3>AI Verification</h3><p>Our system verifies the report, removes duplicates, and assigns a priority score automatically.</p></div>
-        <div class="step"><div class="step-num">3</div><h3>Track Progress</h3><p>Follow your report from submission to resolution with real-time updates and ETA.</p></div>
+        <div class="step"><div class="step-num">1</div><h3>Snap &amp; Report</h3><p>Take a photo of the road damage with location and damage severity.</p></div>
+        <div class="step"><div class="step-num">2</div><h3>AI Verification</h3><p>The system verifies the report, removes duplicates, and assigns a priority score automatically.</p></div>
+        <div class="step"><div class="step-num">3</div><h3>Track Progress</h3><p>Follow your report from submission to resolution with real-time updates.</p></div>
         <div class="step"><div class="step-num">4</div><h3>Earn Rewards</h3><p>Collect points for every verified report. Climb the leaderboard and win monthly prizes.</p></div>
       </div>
     </div>
@@ -119,19 +115,17 @@
   <footer>
     <div class="footer-logo">Trans<span>itron</span></div>
     <p>Empowering citizens. Enabling transparency. Building safer roads for Solapur.</p>
-    <p style="margin-top:12px">© 2026 Transitron. All rights reserved.</p>
+    <p style="margin-top:12px">© 2026 Transitron. All rights reserved.(only for demonstrative purposes)</p>
   </footer>
 </div>
 
 
-<!-- ══════════════════════════════════════════════════════════
-     REPORT ISSUE PAGE
-════════════════════════════════════════════════════════════ -->
+
 <div id="page-report" class="page">
 
   <!-- Step 1 – Issue Type & Severity -->
   <div class="report-page" id="report-step-1">
-    <h1>Help Us Fix Your Roads</h1>
+    <h1>Help Us Fix Roads</h1>
     <p class="sub">Submit a report in 3 easy steps. AI will verify and prioritize your complaint.</p>
     <div class="stepper">
       <div class="step-circle active" id="sc1">1</div>
@@ -188,7 +182,7 @@
     <div class="report-card">
       <div class="form-group">
         <label class="form-label" for="inp-location">Location / Address</label>
-        <input class="form-input" id="inp-location" placeholder="e.g. MG Road, Bangalore, Karnataka" />
+        <input class="form-input" id="inp-location" placeholder="e.g. Solapur–Vijayapura National Highway, Solapur " />
       </div>
       <div class="form-group">
         <label class="form-label" for="inp-desc">Description (optional)</label>
@@ -211,9 +205,8 @@
     </div>
   </div>
 
-  <!-- Step 3 – Review & Submit -->
   <div class="report-page" id="report-step-3" style="display:none">
-    <h1>Help Us Fix Your Roads</h1>
+    <h1>Help Us Fix Roads</h1>
     <p class="sub">Review your report before submitting.</p>
     <div class="stepper">
       <div class="step-circle done">✓</div>
@@ -239,7 +232,6 @@
     </div>
   </div>
 
-  <!-- Success Screen -->
   <div class="report-page" id="report-success" style="display:none">
     <div class="report-card success-screen">
       <div class="check">✅</div>
@@ -256,9 +248,6 @@
 </div>
 
 
-<!-- ══════════════════════════════════════════════════════════
-     LIVE MAP PAGE
-════════════════════════════════════════════════════════════ -->
 <div id="page-map" class="page">
   <div class="map-layout">
 
@@ -298,7 +287,7 @@
             <span class="status-badge status-progress">In Progress</span>
           </div>
           <h4>Waterlogging</h4>
-          <div class="issue-loc">📍 Pune Station Area, Maharashtra</div>
+          <div class="issue-loc">📍Solapur-Dhule Road, Solapur</div>
           <div class="issue-footer"><span>👥 8 reported</span><span>2/19/2026</span></div>
         </div>
         <div class="issue-card">
@@ -307,7 +296,7 @@
             <span class="status-badge status-approved">Approved</span>
           </div>
           <h4>Broken Road</h4>
-          <div class="issue-loc">📍 FC Road, Pune</div>
+          <div class="issue-loc">📍 105 Zilla Parishad Roads, Solapur</div>
           <div class="issue-footer"><span>👥 5 reported</span><span>2/18/2026</span></div>
         </div>
         <div class="issue-card">
@@ -316,7 +305,7 @@
             <span class="status-badge status-resolved">Resolved</span>
           </div>
           <h4>Open Manhole</h4>
-          <div class="issue-loc">📍 Shivajinagar, Pune</div>
+          <div class="issue-loc">📍 Akkalkot Road, Solapur /div>
           <div class="issue-footer"><span>👥 3 reported</span><span>2/17/2026</span></div>
         </div>
       </div>
@@ -346,9 +335,7 @@
 </div>
 
 
-<!-- ══════════════════════════════════════════════════════════
-     LEADERBOARD PAGE
-════════════════════════════════════════════════════════════ -->
+
 <div id="page-leaderboard" class="page">
   <div class="lb-page">
     <div class="lb-header">
@@ -370,8 +357,8 @@
           <div class="podium-card" style="transform:translateY(20px)">
             <div class="avatar-circle av-bronze" style="background:#cd7f32;width:48px;height:48px">RK</div>
             <div class="podium-rank">🥉 #3</div>
-            <div class="podium-name">Ravi Kumar</div>
-            <div class="podium-city">Delhi</div>
+            <div class="podium-name">User 453</div>
+            <div class="podium-city">Solapur</div>
             <div class="podium-points">2,340</div>
             <div class="podium-pts-label">points</div>
           </div>
@@ -379,16 +366,16 @@
             <span class="crown">👑</span>
             <div class="avatar-circle av-gold">PS</div>
             <div class="podium-rank">🥇 #1</div>
-            <div class="podium-name">Priya Sharma</div>
-            <div class="podium-city">Mumbai</div>
+            <div class="podium-name">User 32</div>
+            <div class="podium-city">Solapur</div>
             <div class="podium-points">2,850</div>
             <div class="podium-pts-label">points</div>
           </div>
           <div class="podium-card" style="transform:translateY(10px)">
             <div class="avatar-circle av-silver">AM</div>
             <div class="podium-rank">🥈 #2</div>
-            <div class="podium-name">Amit Mehta</div>
-            <div class="podium-city">Bangalore</div>
+            <div class="podium-name">User 564</div>
+            <div class="podium-city">Solapur</div>
             <div class="podium-points">2,590</div>
             <div class="podium-pts-label">points</div>
           </div>
@@ -431,14 +418,13 @@
         </div>
       </div>
 
-      <!-- Your Stats Card -->
       <div class="your-stats">
         <div class="ys-title">Your Stats</div>
         <div class="ys-user">
           <div class="avatar-circle av-navy" style="width:48px;height:48px;flex-shrink:0">YU</div>
           <div>
             <div class="ys-name">Your Name</div>
-            <div class="ys-city">📍 Bangalore</div>
+            <div class="ys-city">📍 Solapur </div>
             <div class="ys-rank">Rank #24</div>
           </div>
         </div>
@@ -456,9 +442,7 @@
 </div>
 
 
-<!-- ══════════════════════════════════════════════════════════
-     ABOUT PAGE
-════════════════════════════════════════════════════════════ -->
+
 <div id="page-about" class="page">
 
   <div class="about-hero">
@@ -506,6 +490,193 @@
   </footer>
 </div>
 
+
+
+<div id="page-login" class="page">
+  <div class="login-layout">
+
+    <!-- Left Panel -->
+    <div class="login-left">
+      <div class="login-brand" onclick="showPage('home')">
+        <div class="logo-icon" style="width:44px;height:44px">
+          <svg width="22" height="22" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <div class="logo-dot"></div>
+        </div>
+        <span class="logo-text">Trans<span>itron</span></span>
+      </div>
+      <div class="login-left-content">
+        <h1 class="login-left-title">Solapur's Smarter Roads Start Here</h1>
+        <p class="login-left-sub">Join thousands of citizens making Solapur safer — report issues, track repairs, earn rewards.</p>
+        <div class="login-features">
+          <div class="login-feat"><span>📸</span> Report road damage in seconds</div>
+          <div class="login-feat"><span>📍</span> Track your complaint live on the map</div>
+          <div class="login-feat"><span>🏆</span> Earn points and climb the leaderboard</div>
+          <div class="login-feat"><span>🔔</span> Get notified when roads are fixed</div>
+        </div>
+      </div>
+      <div class="login-left-footer">© 2026 Transitron · Solapur Municipal Corporation</div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="login-right">
+      <div class="login-box">
+
+        <!-- User Type Toggle -->
+        <div class="login-type-toggle">
+          <button class="login-type-btn active" id="tab-citizen" onclick="switchLoginType('citizen')">
+            👤 Citizen
+          </button>
+          <button class="login-type-btn" id="tab-official" onclick="switchLoginType('official')">
+            🏛️ Official / Admin
+          </button>
+        </div>
+
+        <!-- Citizen Login -->
+        <div id="login-citizen">
+          <h2 class="login-title">Welcome back</h2>
+          <p class="login-sub">Sign in to your Transitron account</p>
+
+          <!-- Method Tabs -->
+          <div class="login-method-tabs">
+            <button class="login-method-tab active" onclick="switchMethod(this,'email-form')">Email</button>
+            <button class="login-method-tab" onclick="switchMethod(this,'phone-form')">Phone / OTP</button>
+          </div>
+
+          <!-- Email Form -->
+          <div id="email-form">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input class="form-input" type="email" placeholder="you@example.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex;justify-content:space-between">
+                Password
+                <span class="login-link" onclick="">Forgot password?</span>
+              </label>
+              <div class="password-wrap">
+                <input class="form-input" id="pw-citizen" type="password" placeholder="Enter your password" />
+                <button class="pw-toggle" onclick="togglePw('pw-citizen',this)">👁</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
+              <input type="checkbox" id="remember" style="width:15px;height:15px;cursor:pointer"/>
+              <label for="remember" style="font-size:0.85rem;color:var(--muted);cursor:pointer">Remember me</label>
+            </div>
+            <button class="btn-login-submit" onclick="doLogin('citizen')">Sign In</button>
+          </div>
+
+          <!-- Phone / OTP Form -->
+          <div id="phone-form" style="display:none">
+            <div class="form-group">
+              <label class="form-label">Mobile Number</label>
+              <div style="display:flex;gap:8px">
+                <select class="form-input" style="width:90px;flex-shrink:0">
+                  <option>🇮🇳 +91</option>
+                </select>
+                <input class="form-input" id="phone-input" type="tel" placeholder="9876543210" />
+              </div>
+            </div>
+            <button class="btn-login-submit" id="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+            <div id="otp-section" style="display:none;margin-top:16px">
+              <label class="form-label">Enter OTP</label>
+              <div class="otp-boxes">
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+                <input class="otp-input" maxlength="1" type="text" oninput="otpNext(this)" />
+              </div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:8px">Didn't receive it? <span class="login-link">Resend OTP</span></div>
+              <button class="btn-login-submit" style="margin-top:16px" onclick="doLogin('citizen')">Verify & Sign In</button>
+            </div>
+          </div>
+
+          <div class="login-divider"><span>or continue with</span></div>
+
+          <button class="btn-google" onclick="doLogin('citizen')">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+
+          <p class="login-signup-text">Don't have an account? <span class="login-link" onclick="showSignup()">Sign up free</span></p>
+        </div>
+
+        <!-- Official / Admin Login -->
+        <div id="login-official" style="display:none">
+          <div class="official-badge">🏛️ Municipal Official Portal</div>
+          <h2 class="login-title">Official Sign In</h2>
+          <p class="login-sub">Restricted to Solapur Municipal Corporation staff</p>
+
+          <div class="form-group">
+            <label class="form-label">Official ID / Email</label>
+            <input class="form-input" type="email" placeholder="officer@solapurmc.gov.in" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrap">
+              <input class="form-input" id="pw-official" type="password" placeholder="Enter your password" />
+              <button class="pw-toggle" onclick="togglePw('pw-official',this)">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select class="form-input">
+              <option value="">Select your department</option>
+              <option>Roads & PWD</option>
+              <option>Drainage Department</option>
+              <option>Traffic Control</option>
+              <option>Utilities</option>
+              <option>Administration</option>
+            </select>
+          </div>
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:0.82rem;color:#991b1b;margin-bottom:20px">
+            🔒 This portal is for authorized personnel only. Unauthorized access is a punishable offence.
+          </div>
+          <button class="btn-login-submit" style="background:var(--navy)" onclick="doLogin('official')">Sign In to Dashboard</button>
+        </div>
+
+        <!-- Signup Form (hidden by default) -->
+        <div id="login-signup" style="display:none">
+          <h2 class="login-title">Create Account</h2>
+          <p class="login-sub">Join Transitron and help fix Solapur's roads</p>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" type="text" placeholder="Your full name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <div style="display:flex;gap:8px">
+              <select class="form-input" style="width:90px;flex-shrink:0"><option>🇮🇳 +91</option></select>
+              <input class="form-input" type="tel" placeholder="9876543210" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrap">
+              <input class="form-input" id="pw-signup" type="password" placeholder="Create a password" />
+              <button class="pw-toggle" onclick="togglePw('pw-signup',this)">👁</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:20px">
+            <input type="checkbox" style="width:15px;height:15px;margin-top:2px;cursor:pointer"/>
+            <span style="font-size:0.82rem;color:var(--muted)">I agree to the <span class="login-link">Terms of Service</span> and <span class="login-link">Privacy Policy</span></span>
+          </div>
+          <button class="btn-login-submit" onclick="doLogin('citizen')">Create Account</button>
+          <p class="login-signup-text">Already have an account? <span class="login-link" onclick="backToLogin()">Sign in</span></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 

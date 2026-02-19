@@ -1,6 +1,3 @@
-/* ============================================================
-   RoadEye – app.js
-   ============================================================ */
 
 /* ── State ─────────────────────────────────────────────── */
 let selectedIssue = '';
@@ -19,21 +16,21 @@ function showPage(name) {
   window.scrollTo(0, 0);
 }
 
-/* ── Report Form – Issue Type ──────────────────────────── */
+/* ── Report Form──────────────────────────── */
 function selectIssue(btn, val) {
   document.querySelectorAll('.issue-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedIssue = val;
 }
 
-/* ── Report Form – Severity ────────────────────────────── */
+/*  Severity ────────────────────────────── */
 function selectSev(btn, val) {
   document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedSev = val;
 }
 
-/* ── Report Form – Step Navigation ────────────────────── */
+/*Step Navigation ────────────────────── */
 function goStep(n) {
   // Hide all sub-steps
   ['report-step-1', 'report-step-2', 'report-step-3', 'report-success'].forEach(id => {
@@ -41,7 +38,7 @@ function goStep(n) {
     if (el) el.style.display = 'none';
   });
 
-  // Populate review step before showing it
+  //
   if (n === 3) {
     document.getElementById('rv-type').textContent  = selectedIssue || '(not selected)';
     document.getElementById('rv-sev').textContent   = selectedSev   || '(not selected)';
@@ -56,7 +53,7 @@ function goStep(n) {
   if (el) el.style.display = 'block';
 }
 
-/* ── Report Form – Submit ──────────────────────────────── */
+
 function submitReport() {
   ['report-step-1', 'report-step-2', 'report-step-3'].forEach(id => {
     const el = document.getElementById(id);
@@ -65,14 +62,14 @@ function submitReport() {
   document.getElementById('report-success').style.display = 'block';
 }
 
-/* ── Report Form – File Upload ─────────────────────────── */
+/*File Upload ─────────────────────────── */
 function handleFile(input) {
   if (input.files.length > 0) {
     document.getElementById('file-preview').style.display = 'block';
   }
 }
 
-/* ── Map – Filter Tabs ─────────────────────────────────── */
+/* Filter Tabs ─────────────────────────────────── */
 function filterMap(btn, filter) {
   document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -133,8 +130,78 @@ function confirmAssign() {
   closeAssign();
 }
 
-// Close modal on backdrop click
+
 document.addEventListener('click', function(e) {
   const modal = document.getElementById('assign-modal');
   if (modal && e.target === modal) closeAssign();
 });
+
+/* ── Login – Type Switch (Citizen / Official) ──────────── */
+function switchLoginType(type) {
+  document.getElementById('tab-citizen').classList.toggle('active', type === 'citizen');
+  document.getElementById('tab-official').classList.toggle('active', type === 'official');
+  document.getElementById('login-citizen').style.display  = type === 'citizen'  ? 'block' : 'none';
+  document.getElementById('login-official').style.display = type === 'official' ? 'block' : 'none';
+  document.getElementById('login-signup').style.display   = 'none';
+}
+
+/* ── Login – Email / Phone Method Switch ───────────────── */
+function switchMethod(btn, formId) {
+  document.querySelectorAll('.login-method-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('email-form').style.display = formId === 'email-form' ? 'block' : 'none';
+  document.getElementById('phone-form').style.display = formId === 'phone-form' ? 'block' : 'none';
+}
+
+/* ── Login – Send OTP ──────────────────────────────────── */
+function sendOTP() {
+  const phone = document.getElementById('phone-input').value;
+  if (!phone || phone.length < 10) {
+    alert('Please enter a valid 10-digit mobile number.');
+    return;
+  }
+  document.getElementById('send-otp-btn').textContent = '✓ OTP Sent!';
+  document.getElementById('send-otp-btn').style.background = 'var(--green)';
+  document.getElementById('otp-section').style.display = 'block';
+  document.querySelectorAll('.otp-input')[0].focus();
+}
+
+/* ── Login – OTP Box Auto-advance ─────────────────────── */
+function otpNext(input) {
+  if (input.value.length === 1) {
+    const inputs = document.querySelectorAll('.otp-input');
+    const idx = Array.from(inputs).indexOf(input);
+    if (idx < inputs.length - 1) inputs[idx + 1].focus();
+  }
+}
+
+/* ── Login – Password Toggle ───────────────────────────── */
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+/* ── Login – Sign Up Form ──────────────────────────────── */
+function showSignup() {
+  document.getElementById('login-citizen').style.display = 'none';
+  document.getElementById('login-signup').style.display  = 'block';
+}
+function backToLogin() {
+  document.getElementById('login-signup').style.display  = 'none';
+  document.getElementById('login-citizen').style.display = 'block';
+}
+
+/* ── Login – Submit (demo) ─────────────────────────────── */
+function doLogin(type) {
+  if (type === 'official') {
+    showPage('admin');
+  } else {
+    showPage('home');
+  }
+}

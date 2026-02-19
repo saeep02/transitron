@@ -6,7 +6,6 @@
   <title>Transitron – Smart Road Reporting</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800;900&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
@@ -313,12 +312,22 @@
     </div>
 
     <!-- Map Area -->
-    <div class="map-area" style="position:relative;">
-      <div id="leaflet-map" style="width:100%;height:100%;"></div>
-      <div class="map-stats-bar">
-        <div class="map-stat"><div class="map-stat-num ms-red">3</div><div class="map-stat-label">Pending</div></div>
-        <div class="map-stat"><div class="map-stat-num ms-blue">2</div><div class="map-stat-label">In Progress</div></div>
-        <div class="map-stat"><div class="map-stat-num ms-green">1</div><div class="map-stat-label">Resolved</div></div>
+    <div class="map-area">
+      <div class="map-placeholder">
+        <div class="map-marker red"    style="top:35%;left:45%" title="Pothole – High"></div>
+        <div class="map-marker red"    style="top:58%;left:62%" title="Broken Road – High"></div>
+        <div class="map-marker orange" style="top:42%;left:30%" title="Waterlogging – Medium"></div>
+        <div class="map-marker green"  style="top:66%;left:70%" title="Open Manhole – Resolved"></div>
+        <div class="map-marker orange" style="top:25%;left:55%" title="Pothole – Medium"></div>
+        <div style="position:absolute;top:20px;right:20px;background:white;border-radius:10px;padding:12px 16px;font-size:0.82rem;font-weight:600;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+          🗺️ Solapur–Pune Region<br>
+          <span style="font-weight:400;color:var(--muted);font-size:0.78rem">5 active issues</span>
+        </div>
+        <div class="map-stats-bar">
+          <div class="map-stat"><div class="map-stat-num ms-red">2</div>  <div class="map-stat-label">Pending</div></div>
+          <div class="map-stat"><div class="map-stat-num ms-blue">1</div> <div class="map-stat-label">In Progress</div></div>
+          <div class="map-stat"><div class="map-stat-num ms-green">1</div><div class="map-stat-label">Resolved</div></div>
+        </div>
       </div>
     </div>
 
@@ -1009,76 +1018,5 @@
 </div>
 
 <script src="app.js"></script>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-try {
-  var _mapInit = false;
-  var _mapMarkers = [];
-  var _leafletMap = null;
-
-  var _reports = [
-    {id:'RD-001',type:'Pothole',      loc:'Solapur Main Road',     lat:17.6868,lng:75.9012,sev:'high',   st:'pending',  v:12},
-    {id:'RD-002',type:'Waterlogging', loc:'Solapur-Dhule Road',    lat:17.7100,lng:75.9200,sev:'medium', st:'progress', v:8},
-    {id:'RD-003',type:'Broken Road',  loc:'Zilla Parishad Roads',  lat:17.6700,lng:75.8900,sev:'high',   st:'approved', v:5},
-    {id:'RD-004',type:'Open Manhole', loc:'Akkalkot Road',         lat:17.6600,lng:75.9150,sev:'low',    st:'resolved', v:3},
-    {id:'RD-005',type:'Pothole',      loc:'Vijapur Road Ward 12',  lat:17.7050,lng:75.8980,sev:'high',   st:'pending',  v:9},
-    {id:'RD-006',type:'Accident Zone',loc:'Bijapur Road Crossing', lat:17.6750,lng:75.9300,sev:'high',   st:'progress', v:21}
-  ];
-
-  var _colors = {high:'#ef4444',medium:'#f97316',low:'#22c55e'};
-  var _labels = {pending:'Pending',progress:'In Progress',approved:'Approved',resolved:'Resolved'};
-
-  function _buildMap() {
-    if (_mapInit) { if(_leafletMap) _leafletMap.invalidateSize(); return; }
-    var el = document.getElementById('leaflet-map');
-    if (!el) return;
-    _mapInit = true;
-    _leafletMap = L.map('leaflet-map').setView([17.6868,75.9092],13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap',maxZoom:19
-    }).addTo(_leafletMap);
-    _reports.forEach(function(r){
-      var c = _colors[r.sev]||'#999';
-      var icon = L.divIcon({
-        className:'',
-        html:'<div style="width:18px;height:18px;background:'+c+';border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
-        iconSize:[18,18],iconAnchor:[9,9]
-      });
-      var m = L.marker([r.lat,r.lng],{icon}).addTo(_leafletMap);
-      m.bindPopup(
-        '<b style="color:#1a2b5e">'+r.type+'</b><br>'+
-        '<small>'+r.id+'</small><br>'+
-        '📍 '+r.loc+'<br>'+
-        '<span style="background:'+c+';color:#fff;padding:1px 7px;border-radius:99px;font-size:11px">'+r.sev.toUpperCase()+'</span> '+
-        '<span style="background:#eee;padding:1px 7px;border-radius:99px;font-size:11px">'+(_labels[r.st]||r.st)+'</span><br>'+
-        '<small>👥 '+r.v+' reported</small>'
-      );
-      m._st = r.st;
-      _mapMarkers.push(m);
-    });
-    setTimeout(function(){_leafletMap.invalidateSize();},400);
-  }
-
-  // Safely patch showPage without breaking it
-  var _origShow = window.showPage;
-  window.showPage = function(name) {
-    try { _origShow(name); } catch(e) {}
-    if (name === 'map') setTimeout(_buildMap, 300);
-  };
-
-  // Filter function for tabs
-  window.filterMapMarkers = function(btn, filter) {
-    document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});
-    btn.classList.add('active');
-    if (!_leafletMap) return;
-    _mapMarkers.forEach(function(m){
-      (filter==='all'||m._st===filter) ? m.addTo(_leafletMap) : _leafletMap.removeLayer(m);
-    });
-  };
-} catch(err) {
-  console.warn('Map init error:', err);
-}
-</script>
 </body>
 </html>

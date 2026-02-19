@@ -71,12 +71,9 @@ function handleFile(input) {
 
 /* Filter Tabs ─────────────────────────────────── */
 function filterMap(btn, filter) {
-  if (typeof filterMapMarkers === 'function') {
-    filterMapMarkers(btn, filter);
-  } else {
-    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Future: filter the issue list by `filter` value
 }
 
 /* ── Leaderboard – Tab Switching ───────────────────────── */

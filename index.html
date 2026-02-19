@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Transitron – Smart Road Reporting</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800;900&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
@@ -313,12 +313,12 @@
     </div>
 
     <!-- Map Area -->
-    <div class="map-area">
-      <div id="leaflet-map" style="width:100%;height:100%;z-index:1;"></div>
-      <div class="map-stats-bar" style="z-index:10;">
-        <div class="map-stat"><div class="map-stat-num ms-red" id="stat-pending">2</div><div class="map-stat-label">Pending</div></div>
-        <div class="map-stat"><div class="map-stat-num ms-blue" id="stat-progress">1</div><div class="map-stat-label">In Progress</div></div>
-        <div class="map-stat"><div class="map-stat-num ms-green" id="stat-resolved">1</div><div class="map-stat-label">Resolved</div></div>
+    <div class="map-area" style="position:relative;">
+      <div id="leaflet-map" style="width:100%;height:100%;"></div>
+      <div class="map-stats-bar">
+        <div class="map-stat"><div class="map-stat-num ms-red">3</div><div class="map-stat-label">Pending</div></div>
+        <div class="map-stat"><div class="map-stat-num ms-blue">2</div><div class="map-stat-label">In Progress</div></div>
+        <div class="map-stat"><div class="map-stat-num ms-green">1</div><div class="map-stat-label">Resolved</div></div>
       </div>
     </div>
 
@@ -1009,66 +1009,75 @@
 </div>
 
 <script src="app.js"></script>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const mapReports = [
-  { id:'RD-2024-00001', type:'Pothole',      location:'Solapur Main Road',       lat:17.6868, lng:75.9012, severity:'high',   status:'pending',  votes:12, date:'2/19/2026' },
-  { id:'RD-2024-00002', type:'Waterlogging', location:'Solapur-Dhule Road',       lat:17.7100, lng:75.9200, severity:'medium', status:'progress', votes:8,  date:'2/19/2026' },
-  { id:'RD-2024-00003', type:'Broken Road',  location:'Zilla Parishad Roads',     lat:17.6700, lng:75.8900, severity:'high',   status:'approved', votes:5,  date:'2/18/2026' },
-  { id:'RD-2024-00004', type:'Open Manhole', location:'Akkalkot Road',            lat:17.6600, lng:75.9150, severity:'low',    status:'resolved', votes:3,  date:'2/17/2026' },
-  { id:'RD-2024-00005', type:'Pothole',      location:'Vijapur Road, Ward 12',    lat:17.7050, lng:75.8980, severity:'high',   status:'pending',  votes:9,  date:'2/19/2026' },
-  { id:'RD-2024-00006', type:'Accident Zone',location:'Bijapur Road Crossing',    lat:17.6750, lng:75.9300, severity:'high',   status:'progress', votes:21, date:'2/18/2026' }
-];
+try {
+  var _mapInit = false;
+  var _mapMarkers = [];
+  var _leafletMap = null;
 
-const sevColors = { high:'#ef4444', medium:'#f97316', low:'#22c55e' };
-let leafletMap = null, allMarkers = [];
+  var _reports = [
+    {id:'RD-001',type:'Pothole',      loc:'Solapur Main Road',     lat:17.6868,lng:75.9012,sev:'high',   st:'pending',  v:12},
+    {id:'RD-002',type:'Waterlogging', loc:'Solapur-Dhule Road',    lat:17.7100,lng:75.9200,sev:'medium', st:'progress', v:8},
+    {id:'RD-003',type:'Broken Road',  loc:'Zilla Parishad Roads',  lat:17.6700,lng:75.8900,sev:'high',   st:'approved', v:5},
+    {id:'RD-004',type:'Open Manhole', loc:'Akkalkot Road',         lat:17.6600,lng:75.9150,sev:'low',    st:'resolved', v:3},
+    {id:'RD-005',type:'Pothole',      loc:'Vijapur Road Ward 12',  lat:17.7050,lng:75.8980,sev:'high',   st:'pending',  v:9},
+    {id:'RD-006',type:'Accident Zone',loc:'Bijapur Road Crossing', lat:17.6750,lng:75.9300,sev:'high',   st:'progress', v:21}
+  ];
 
-function initMap() {
-  if (leafletMap) { leafletMap.invalidateSize(); return; }
-  leafletMap = L.map('leaflet-map').setView([17.6868, 75.9092], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors', maxZoom: 19
-  }).addTo(leafletMap);
+  var _colors = {high:'#ef4444',medium:'#f97316',low:'#22c55e'};
+  var _labels = {pending:'Pending',progress:'In Progress',approved:'Approved',resolved:'Resolved'};
 
-  mapReports.forEach(r => {
-    const col = sevColors[r.severity] || '#6b7280';
-    const icon = L.divIcon({
-      className:'',
-      html: `<div style="width:20px;height:20px;background:${col};border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
-      iconSize:[20,20], iconAnchor:[10,10]
+  function _buildMap() {
+    if (_mapInit) { if(_leafletMap) _leafletMap.invalidateSize(); return; }
+    var el = document.getElementById('leaflet-map');
+    if (!el) return;
+    _mapInit = true;
+    _leafletMap = L.map('leaflet-map').setView([17.6868,75.9092],13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap',maxZoom:19
+    }).addTo(_leafletMap);
+    _reports.forEach(function(r){
+      var c = _colors[r.sev]||'#999';
+      var icon = L.divIcon({
+        className:'',
+        html:'<div style="width:18px;height:18px;background:'+c+';border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
+        iconSize:[18,18],iconAnchor:[9,9]
+      });
+      var m = L.marker([r.lat,r.lng],{icon}).addTo(_leafletMap);
+      m.bindPopup(
+        '<b style="color:#1a2b5e">'+r.type+'</b><br>'+
+        '<small>'+r.id+'</small><br>'+
+        '📍 '+r.loc+'<br>'+
+        '<span style="background:'+c+';color:#fff;padding:1px 7px;border-radius:99px;font-size:11px">'+r.sev.toUpperCase()+'</span> '+
+        '<span style="background:#eee;padding:1px 7px;border-radius:99px;font-size:11px">'+(_labels[r.st]||r.st)+'</span><br>'+
+        '<small>👥 '+r.v+' reported</small>'
+      );
+      m._st = r.st;
+      _mapMarkers.push(m);
     });
-    const statusLabel = {pending:'Pending',progress:'In Progress',approved:'Approved',resolved:'Resolved'}[r.status]||r.status;
-    const m = L.marker([r.lat,r.lng],{icon}).addTo(leafletMap).bindPopup(`
-      <div style="font-family:sans-serif;min-width:190px;padding:4px">
-        <div style="font-size:0.68rem;color:#6b7280;font-weight:600">${r.id}</div>
-        <div style="font-size:0.95rem;font-weight:700;color:#1a2b5e;margin:4px 0">${r.type}</div>
-        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:8px">📍 ${r.location}</div>
-        <span style="background:${col};color:white;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700">${r.severity.toUpperCase()}</span>
-        <span style="background:#f3f4f8;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:600;margin-left:4px">${statusLabel}</span>
-        <div style="font-size:0.72rem;color:#6b7280;margin-top:8px">👥 ${r.votes} reported · ${r.date}</div>
-      </div>
-    `);
-    m._report = r;
-    allMarkers.push(m);
-  });
-  setTimeout(()=>leafletMap.invalidateSize(),200);
-}
+    setTimeout(function(){_leafletMap.invalidateSize();},400);
+  }
 
-function filterMapMarkers(btn, filter) {
-  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if (!leafletMap) return;
-  allMarkers.forEach(m => {
-    const show = filter==='all' || m._report.status===filter;
-    show ? m.addTo(leafletMap) : leafletMap.removeLayer(m);
-  });
-}
+  // Safely patch showPage without breaking it
+  var _origShow = window.showPage;
+  window.showPage = function(name) {
+    try { _origShow(name); } catch(e) {}
+    if (name === 'map') setTimeout(_buildMap, 300);
+  };
 
-// Hook into showPage to init map when map tab is clicked
-const _origShowPage = showPage;
-function showPage(name) {
-  _origShowPage(name);
-  if (name==='map') setTimeout(initMap, 200);
+  // Filter function for tabs
+  window.filterMapMarkers = function(btn, filter) {
+    document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    if (!_leafletMap) return;
+    _mapMarkers.forEach(function(m){
+      (filter==='all'||m._st===filter) ? m.addTo(_leafletMap) : _leafletMap.removeLayer(m);
+    });
+  };
+} catch(err) {
+  console.warn('Map init error:', err);
 }
 </script>
 </body>

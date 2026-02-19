@@ -88,3 +88,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+/* ── Admin – Tab Switching ─────────────────────────────── */
+function adminTab(btn, tabName) {
+  document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.admin-tab-content').forEach(t => t.style.display = 'none');
+  document.getElementById('tab-' + tabName).style.display = 'block';
+  document.getElementById('admin-page-title').textContent =
+    tabName.charAt(0).toUpperCase() + tabName.slice(1);
+}
+
+/* ── Admin – Assign Modal ──────────────────────────────── */
+let currentAssignBtn = null;
+
+function assignComplaint(btn) {
+  currentAssignBtn = btn;
+  document.getElementById('assign-modal').style.display = 'flex';
+}
+
+function closeAssign() {
+  document.getElementById('assign-modal').style.display = 'none';
+  currentAssignBtn = null;
+}
+
+function confirmAssign() {
+  if (currentAssignBtn) {
+    const dept = document.getElementById('assign-dept').value;
+    const row = currentAssignBtn.closest('tr');
+    // Update status badge
+    const statusCell = row.querySelector('.status-badge');
+    if (statusCell) {
+      statusCell.textContent = 'In Progress';
+      statusCell.className = 'status-badge status-progress';
+    }
+    // Update dept cell if present
+    const deptCell = row.querySelector('.dept-tag');
+    if (deptCell) deptCell.textContent = dept;
+    // Swap button
+    currentAssignBtn.textContent = 'View';
+    currentAssignBtn.className = 'admin-btn-view';
+    currentAssignBtn.onclick = null;
+  }
+  closeAssign();
+}
+
+// Close modal on backdrop click
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('assign-modal');
+  if (modal && e.target === modal) closeAssign();
+});

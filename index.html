@@ -6,6 +6,7 @@
   <title>Transitron – Smart Road Reporting</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800;900&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
@@ -182,7 +183,17 @@
     <div class="report-card">
       <div class="form-group">
         <label class="form-label" for="inp-location">Location / Address</label>
-        <input class="form-input" id="inp-location" placeholder="e.g. Solapur–Vijayapura National Highway, Solapur " />
+        <div style="position:relative">
+          <input class="form-input" id="inp-location" placeholder="e.g. Solapur–Vijayapura National Highway, Solapur" autocomplete="off" oninput="locationSearch(this.value)" />
+          <div id="location-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:100;max-height:220px;overflow-y:auto;margin-top:4px"></div>
+          <div id="location-gps" style="margin-top:8px">
+            <button type="button" onclick="getGPS()" style="background:none;border:none;color:var(--navy);font-size:0.82rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;padding:0">
+              📍 <span id="gps-label">Use my current location</span>
+            </button>
+          </div>
+          <input type="hidden" id="inp-lat" />
+          <input type="hidden" id="inp-lng" />
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="inp-desc">Description (optional)</label>
@@ -312,22 +323,12 @@
     </div>
 
     <!-- Map Area -->
-    <div class="map-area">
-      <div class="map-placeholder">
-        <div class="map-marker red"    style="top:35%;left:45%" title="Pothole – High"></div>
-        <div class="map-marker red"    style="top:58%;left:62%" title="Broken Road – High"></div>
-        <div class="map-marker orange" style="top:42%;left:30%" title="Waterlogging – Medium"></div>
-        <div class="map-marker green"  style="top:66%;left:70%" title="Open Manhole – Resolved"></div>
-        <div class="map-marker orange" style="top:25%;left:55%" title="Pothole – Medium"></div>
-        <div style="position:absolute;top:20px;right:20px;background:white;border-radius:10px;padding:12px 16px;font-size:0.82rem;font-weight:600;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,0.1)">
-          🗺️ Solapur–Pune Region<br>
-          <span style="font-weight:400;color:var(--muted);font-size:0.78rem">5 active issues</span>
-        </div>
-        <div class="map-stats-bar">
-          <div class="map-stat"><div class="map-stat-num ms-red">2</div>  <div class="map-stat-label">Pending</div></div>
-          <div class="map-stat"><div class="map-stat-num ms-blue">1</div> <div class="map-stat-label">In Progress</div></div>
-          <div class="map-stat"><div class="map-stat-num ms-green">1</div><div class="map-stat-label">Resolved</div></div>
-        </div>
+    <div class="map-area" style="position:relative;">
+      <div id="leaflet-map" style="width:100%;height:100%;"></div>
+      <div class="map-stats-bar">
+        <div class="map-stat"><div class="map-stat-num ms-red" id="stat-pending">3</div><div class="map-stat-label">Pending</div></div>
+        <div class="map-stat"><div class="map-stat-num ms-blue" id="stat-progress">2</div><div class="map-stat-label">In Progress</div></div>
+        <div class="map-stat"><div class="map-stat-num ms-green" id="stat-resolved">1</div><div class="map-stat-label">Resolved</div></div>
       </div>
     </div>
 
@@ -1018,5 +1019,189 @@
 </div>
 
 <script src="app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+try {
+/* ── Shared report store ─────────────────────────────────── */
+var _userReports = [];
+
+/* ── Location Autocomplete (Nominatim, free, no key) ────── */
+var _searchTimer = null;
+
+function locationSearch(val) {
+  clearTimeout(_searchTimer);
+  var box = document.getElementById('location-suggestions');
+  if (!val || val.length < 3) { box.style.display = 'none'; return; }
+  _searchTimer = setTimeout(function() {
+    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(val) + '&countrycodes=in&limit=6&addressdetails=1')
+      .then(function(r){ return r.json(); })
+      .then(function(results) {
+        if (!results.length) { box.style.display = 'none'; return; }
+        box.innerHTML = '';
+        results.forEach(function(r) {
+          var item = document.createElement('div');
+          item.style.cssText = 'padding:10px 14px;cursor:pointer;font-size:0.85rem;border-bottom:1px solid #f0f0f0;line-height:1.4';
+          item.innerHTML = '<span style="font-weight:600;color:#1a2b5e">📍 </span>' + r.display_name;
+          item.onmouseenter = function(){ this.style.background='#f8f9ff'; };
+          item.onmouseleave = function(){ this.style.background='white'; };
+          item.onclick = function() {
+            document.getElementById('inp-location').value = r.display_name;
+            document.getElementById('inp-lat').value = r.lat;
+            document.getElementById('inp-lng').value = r.lon;
+            box.style.display = 'none';
+            document.getElementById('gps-label').textContent = '✓ Location set: ' + (r.address.road || r.address.suburb || 'Selected');
+            document.getElementById('gps-label').style.color = 'var(--green)';
+          };
+          box.appendChild(item);
+        });
+        box.style.display = 'block';
+      }).catch(function(){ box.style.display = 'none'; });
+  }, 400);
+}
+
+// Close suggestions when clicking outside
+document.addEventListener('click', function(e) {
+  var box = document.getElementById('location-suggestions');
+  if (box && !box.contains(e.target) && e.target.id !== 'inp-location') {
+    box.style.display = 'none';
+  }
+});
+
+/* ── GPS: Get current location ──────────────────────────── */
+function getGPS() {
+  var label = document.getElementById('gps-label');
+  label.textContent = '⏳ Getting location...';
+  if (!navigator.geolocation) { label.textContent = 'GPS not supported'; return; }
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude, lng = pos.coords.longitude;
+    document.getElementById('inp-lat').value = lat;
+    document.getElementById('inp-lng').value = lng;
+    // Reverse geocode to get address
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng)
+      .then(function(r){ return r.json(); })
+      .then(function(r) {
+        var addr = r.display_name || (lat.toFixed(5) + ', ' + lng.toFixed(5));
+        document.getElementById('inp-location').value = addr;
+        label.textContent = '✓ GPS location captured';
+        label.style.color = 'var(--green)';
+      }).catch(function(){
+        document.getElementById('inp-location').value = lat.toFixed(5) + ', ' + lng.toFixed(5);
+        label.textContent = '✓ GPS location captured';
+        label.style.color = 'var(--green)';
+      });
+  }, function() {
+    label.textContent = '⚠️ Could not get location. Please type manually.';
+    label.style.color = 'var(--red)';
+  });
+}
+
+/* ── Map: Leaflet setup ─────────────────────────────────── */
+var _mapInit = false, _leafletMap = null, _allMarkers = [];
+
+var _baseReports = [
+  {id:'RD-001', type:'Pothole',       loc:'Solapur Main Road',     lat:17.6868, lng:75.9012, sev:'high',   st:'pending',  v:12},
+  {id:'RD-002', type:'Waterlogging',  loc:'Solapur-Dhule Road',    lat:17.7100, lng:75.9200, sev:'medium', st:'progress', v:8},
+  {id:'RD-003', type:'Broken Road',   loc:'Zilla Parishad Roads',  lat:17.6700, lng:75.8900, sev:'high',   st:'approved', v:5},
+  {id:'RD-004', type:'Open Manhole',  loc:'Akkalkot Road',         lat:17.6600, lng:75.9150, sev:'low',    st:'resolved', v:3},
+  {id:'RD-005', type:'Pothole',       loc:'Vijapur Road Ward 12',  lat:17.7050, lng:75.8980, sev:'high',   st:'pending',  v:9},
+  {id:'RD-006', type:'Accident Zone', loc:'Bijapur Road Crossing', lat:17.6750, lng:75.9300, sev:'high',   st:'progress', v:21}
+];
+var _sevColors = {high:'#ef4444', medium:'#f97316', low:'#22c55e'};
+var _stLabels  = {pending:'Pending', progress:'In Progress', approved:'Approved', resolved:'Resolved'};
+
+function _makeMarker(r) {
+  var c = _sevColors[r.sev] || '#6b7280';
+  var icon = L.divIcon({
+    className:'',
+    html:'<div style="width:18px;height:18px;background:'+c+';border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>',
+    iconSize:[18,18], iconAnchor:[9,9]
+  });
+  var isNew = !!r.isNew;
+  var m = L.marker([r.lat,r.lng],{icon}).addTo(_leafletMap);
+  m.bindPopup(
+    '<div style="font-family:sans-serif;min-width:190px">' +
+    (isNew ? '<div style="background:#f0fdf4;border:1px solid #22c55e;border-radius:6px;padding:4px 8px;font-size:0.68rem;font-weight:700;color:#15803d;margin-bottom:8px">🆕 Just Reported</div>' : '') +
+    '<div style="font-size:0.68rem;color:#6b7280">'+r.id+'</div>'+
+    '<div style="font-size:0.95rem;font-weight:700;color:#1a2b5e;margin:4px 0">'+r.type+'</div>'+
+    '<div style="font-size:0.75rem;color:#6b7280;margin-bottom:8px">📍 '+(r.loc.length > 60 ? r.loc.substring(0,60)+'...' : r.loc)+'</div>'+
+    '<span style="background:'+c+';color:#fff;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700">'+r.sev.toUpperCase()+'</span> '+
+    '<span style="background:#f3f4f8;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:600;margin-left:4px">'+(_stLabels[r.st]||r.st)+'</span>'+
+    '<div style="font-size:0.72rem;color:#6b7280;margin-top:8px">👥 '+(r.v||1)+' reported</div>'+
+    '</div>'
+  );
+  m._st = r.st;
+  _allMarkers.push(m);
+  return m;
+}
+
+function _buildMap() {
+  if (_mapInit) { if(_leafletMap) _leafletMap.invalidateSize(); return; }
+  var el = document.getElementById('leaflet-map');
+  if (!el) return;
+  _mapInit = true;
+  _leafletMap = L.map('leaflet-map').setView([17.6868, 75.9092], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap', maxZoom:19
+  }).addTo(_leafletMap);
+  _baseReports.forEach(_makeMarker);
+  // Add any reports submitted during this session
+  _userReports.forEach(_makeMarker);
+  setTimeout(function(){ _leafletMap.invalidateSize(); }, 400);
+}
+
+/* ── Add new report pin to map ──────────────────────────── */
+function addReportToMap(type, sev, loc, lat, lng) {
+  var id = 'RD-2026-' + String(Date.now()).slice(-5);
+  var report = { id:id, type:type, loc:loc, lat:lat||17.6868, lng:lng||75.9092, sev:sev||'medium', st:'pending', v:1, isNew:true };
+  _userReports.push(report);
+
+  // Update stat counter
+  var el = document.getElementById('stat-pending');
+  if (el) el.textContent = parseInt(el.textContent||0) + 1;
+
+  // If map is already open, add pin immediately and fly to it
+  if (_leafletMap) {
+    var m = _makeMarker(report);
+    m.openPopup();
+    _leafletMap.flyTo([report.lat, report.lng], 15, { duration: 1.5 });
+  }
+}
+
+/* ── Hook submitReport to also pin location on map ──────── */
+var _origSubmit = window.submitReport;
+window.submitReport = function() {
+  var type = document.getElementById('rv-type') ? document.getElementById('rv-type').textContent : 'Road Issue';
+  var sev  = (window.selectedSev || 'medium').toLowerCase();
+  var loc  = document.getElementById('inp-location') ? document.getElementById('inp-location').value : '';
+  var lat  = parseFloat(document.getElementById('inp-lat') ? document.getElementById('inp-lat').value : '');
+  var lng  = parseFloat(document.getElementById('inp-lng') ? document.getElementById('inp-lng').value : '');
+
+  // Use Solapur center if no coordinates
+  if (isNaN(lat)) lat = 17.6868 + (Math.random()-0.5)*0.04;
+  if (isNaN(lng)) lng = 75.9092 + (Math.random()-0.5)*0.04;
+
+  addReportToMap(type, sev, loc || 'Solapur', lat, lng);
+  if (_origSubmit) _origSubmit();
+};
+
+/* ── Filter tabs ────────────────────────────────────────── */
+window.filterMapMarkers = function(btn, filter) {
+  document.querySelectorAll('.filter-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  if (!_leafletMap) return;
+  _allMarkers.forEach(function(m){
+    (filter==='all'||m._st===filter) ? m.addTo(_leafletMap) : _leafletMap.removeLayer(m);
+  });
+};
+
+/* ── showPage hook ──────────────────────────────────────── */
+var _origShowPage = window.showPage;
+window.showPage = function(name) {
+  try { _origShowPage(name); } catch(e) {}
+  if (name === 'map') setTimeout(_buildMap, 250);
+};
+
+} catch(err) { console.warn('Map/Location error:', err); }
+</script>
 </body>
 </html>
